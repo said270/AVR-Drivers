@@ -1,0 +1,92 @@
+1- Semaphores
+    1-Define semaphores
+    xSemaphoreHandle name;       //xSemaphoreHandle LCDsem   // define semaphore struct 
+  
+    2-Create binary Semaphore  
+    vSemaphoreCreateBinary(semaphore)   //vSemaphoreCreateBinary(LCDsem)
+   or
+    LCDsem=xSemaphoreCreateBinary()
+  
+    3-Create Counting Semaphore
+    xSemaphoreCreateCounting(uxMaxCount , uxIntialCount);
+    return : 1-NULL   //not created caz no memory
+           2-AnyOtherValue: //handle (ID) to semaphore
+	LCDsem=xSemaphoreCreateCounting(1,1);
+	if(LCDsem !=NULL){
+	//created right
+	}
+	else {
+	//not created
+	}
+	
+	4-pend / take
+	xSemaphoreTake(xSemaphore , xTickstoWait);
+	return : 1-PdPASS: semaphore is taken and decremented
+	         2-pdFAIL: semaphore isn't avialble 
+	u8 SemState=xSemaphoreTake(LCDsem , 10);
+	if(SemState==pdPASS){
+	//access LCD
+	//give semaphore
+	}
+	else {
+	//semaphores isn't avilable
+	//and you finished wait ticks and didnt get semaphore ( timeout passed )
+	}
+	
+	5-Give(Post)
+	xSemaphoreGive(xSemaphore)
+	return : 1-PdPASS: semaphore is given and incremented
+	         2-pdFAIL: semaphore is at max count so can't be incremented
+			 
+===========================================================================================================================
+2-Queue
+  
+  1-define the queue 
+  xQueueHandler name;
+  ex:xQueueHandler Buffer;
+  
+  2-Queue creation
+   xQueueCreate(Length , ItemSize);
+   return : 1-NULL   //not created caz no memory
+            2-AnyOtherValue: //handle (ID) to queue
+	ex:Buffer=xQueueCreate(6,sizeof(u8));
+	
+	
+   3-Sending to the queue
+   xQueueSend(xQueue , *pvItem , xTickstowait)    //wait if the queue is filled
+   return:1-pdPASS : message is sent
+          2-pdFAIL : queue is full
+	
+	
+   4-Reading from Queue
+   xQueueReceive(xQueue , *pvItem , xTickstoWait);   //wait if no data in queue
+   return:1-pdPASS : message is read
+          2-pdFAIL : queue is empty
+	ex: u8 ReciveState = xQueueReceive(buffer,&var , 0);
+
+====================================================================================================================================
+3-MailBox
+  
+  1-Define 
+   same as queue
+   xQueueHandler name;
+  ex:xQueueHandler Mailbox;
+   
+  2-create mailbox :
+  same as queue with length = 1
+   ex:MailBox=xQueueCreate(1,sizeof(u8));
+   
+   3-Sending to mailbox
+   xQueueOverWrite(xQueue,*pvItem);
+   
+   3-Recive from mailbox (without cleraing the message)
+   xQueuepeek(xQueue,*pvItem ,xTicksToWait)    //wait only first time when no data is yet initialzied
+   
+=========================================================================================================================================
+   
+   
+   
+   
+   
+  
+  
